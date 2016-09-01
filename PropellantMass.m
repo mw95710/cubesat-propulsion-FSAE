@@ -15,6 +15,7 @@ V = 5.9665*(0.0254^3); % Volume of chamber in use Kyle [m^3]
 R = 8.3144598; % gas constant [J/(K*mol)]
 oxMM = 0.03199880; % molar mass of O2 [kg/mol]
 fuMM = 0.00201588; % molar mass of H2 [kg/mol]
+H2OMM = 0.01801528; % molas mass of H2O [kg/mol]
 g = 9.80665; % standard gravity constant of Earth [m/s^2]
 Ae = pi*(0.03159456/2)^2; % nozzle exit area [m^2]
 samplingRate = 1612.903225806452; % sampling rate of pressure sensor [count/s]
@@ -37,22 +38,20 @@ oxprepar = precombP/3;
 % mols of O2 before combustion
 prenox = oxprepar*V/(R*T);
 
-% calculate postcombustion ox partial pressure [Pa[
-oxpostpar = postcombP/3;
-
-% mols of O2 after combustion
-postnox = oxpostpar*V/(R*T);
+% mols of H2O after combustion
+postnh2O = postcombP*V/(R*T);
 
 % calculate masses of propellants
-oxMass = (prenox - postnox)*oxMM; % O2 consumed [kg]
-fuMass = 2*(prenox - postnox)*fuMM; % H2 consumed [kg]
+H2Omass = postnh2O*H2OMM;
+oxMass = prenox*oxMM; % O2 consumed [kg]
+fuMass = 2*prenox*fuMM; % H2 consumed [kg]
 oxMasscons = (prenox)*oxMM; % O2 consumed assuming all intial O2 is used [kg]
 fuMasscons = 2*(prenox)*fuMM; % H2 consumed assuming all initial H2 is used [kg]
-totMass = oxMass + fuMass; % total propellant mass consumed [kg]
+totMass = oxMass + fuMass - H2Omass; % total propellant mass consumed [kg]
 totMasscons = oxMasscons + fuMasscons; % conservative estimate 
 
 % calculate corrected vacuum specific Impulse = impulse/propellant weight [s]
 format short
-vacIsp = impulse/(totMass*g); % estimate
-vacIspcons = impulse/(totMasscons*g); % conservative estimate
+vacIsp = impulse/(totMass*g) % estimate
+vacIspcons = impulse/(totMasscons*g) % conservative estimate
 end
