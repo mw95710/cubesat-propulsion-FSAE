@@ -7,7 +7,7 @@
 % also explores how Thrust and Isp varies with respect to area ratio,
 % pre-combustion pressure, throat area, and combustion chamber volume. This
 % script will attempt to perform a multi-variable optimization to find maximum
-% total Impulse (equivalent to maximum total Thrust) and Isp. 
+% total Impulse (equivalent to maximum total Thrust) and Isp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function combfuel()
 % compute Adiabatic Flame temperature and mole fraction of water after each
