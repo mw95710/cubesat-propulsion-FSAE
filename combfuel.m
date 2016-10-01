@@ -99,8 +99,8 @@ Rt = 0.795e-3; % throat radius
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % Optimization #3: Multi-Variable Optimization 
-Rt = linspace(1e-4,5e-3,10); % Throat Radius [m]
-V = linspace(0.00001,0.005,10); % combustion chamber volume [m^3]
+Rt = linspace(1e-4,6e-3,10); % Throat Radius [m]
+V = linspace(0.00001,0.007,10); % combustion chamber volume [m^3]
 P0 = linspace(1.013e+5,1.013e+7,10); % Pre-combustion chamber pressure [Pa]
 Me = linspace(4.20427,4.20427,10); % Exit Mach Number (determines Area Ratio)
 
