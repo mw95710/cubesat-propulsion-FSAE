@@ -22,14 +22,14 @@ samplingRate = 1612.903225806452; % sampling rate of pressure sensor [count/s]
 
 % input parameters
 atm = 101325; % atmospheric pressure/back pressure [Pa]
-precombP = 551581 + atm; % pre-combustion absolute pressure [Pa]
-postcombP = 68947.6 + atm; % post-combustion absolute pressure [Pa]
+precombP = 620528 + atm; % pre-combustion absolute pressure [Pa]
+postcombP = 0 + atm; % post-combustion absolute pressure [Pa]
 T = 293; % steady state temperature of combustion chamber [K]
 % check valve closes when chamber pressure is about 251.5953 psi and when
 % temperature is about 2985 K
-pulseDur = 17/samplingRate; % approximate pulse duration [s]
+pulseDur = 45/samplingRate; % approximate pulse duration [s]
 impulsecorr = pulseDur*atm*Ae; % impulse correction for back pressure [N*s]
-impulsemeasured = 4.4687452e-2; % measured impulse from test rig [N*s]
+impulsemeasured = 9.747e-3; % measured impulse from test rig [N*s]
 impulse = impulsemeasured + impulsecorr; % impulse delivered [N*s]
 
 % calculate precombustion ox partial pressure [Pa]
@@ -54,4 +54,6 @@ totMasscons = oxMasscons + fuMasscons; % conservative estimate
 format short
 vacIsp = impulse/(totMass*g) % estimate
 vacIspcons = impulse/(totMasscons*g) % conservative estimate
+atmIsp = impulsemeasured/(totMass*g)
+atmIspcons = impulsemeasured/(totMasscons*g)
 end

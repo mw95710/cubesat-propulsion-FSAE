@@ -5,13 +5,17 @@
 % method to solve for the geometry of the contour given the throat radius
 % and, desired expamsion ratio, and length. This script is verified with
 % results from Rocket Propulsion Elements by Sutton. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% User-input Parameters
 Rt = 0.795e-3; % throat radius [m]
+e = 25; % area expansion ratio
+f = 0.8; % percent of length of conical nozzle with half angle of 15 degrees
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 R1 = Rt*1.5;
 R2 = Rt*0.382;
 
-e = 25; % area expansion ratio
-f = 0.8; % percent of length of conical nozzle with half angle of 15 degrees
 thetaN = (pi/180)*30; % angle at start of parabola
 thetaE = (pi/180)*8.5; % angle at end of parabola
 alpha = linspace(0,thetaN,1000);
