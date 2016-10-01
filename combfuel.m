@@ -16,14 +16,15 @@ function combfuel()
 
 % compute mL of water remaining in the chamber after n number of burns
 nn = 1000; 
-P0 = 1.013e+6; % [Pa] or 10 atm
+P0 = 1.01325e+6; % [Pa] or 10 atm
 V = 0.0002; % [m^3] or around 0.25 U
 VH2O = waterRemain(P0,V,Tf,MfracH2O,nn);
 fprintf('The amount of water remaining in the chamber \n after %f burns = %f mL\n',nn,VH2O);
-
-t = 0.00001; tfinal = 2; % in seconds 
 Me = 4.20427; % exit mach number
-Rt = 0.795e-3; % throat radius 
+Rt = 0.795e-3; % throat radius
+
+t = 0.0001; tfinal = 2; % in seconds 
+
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % % Optimization #1: Varying Throat Radius 
@@ -99,8 +100,8 @@ Rt = 0.795e-3; % throat radius
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % Optimization #3: Multi-Variable Optimization 
-Rt = linspace(1e-4,6e-3,10); % Throat Radius [m]
-V = linspace(0.00001,0.007,10); % combustion chamber volume [m^3]
+Rt = linspace(1e-5,5.8e-3,25); % Throat Radius [m]
+V = linspace(0.00001,0.01,25); % combustion chamber volume [m^3]
 P0 = linspace(1.013e+5,1.013e+7,10); % Pre-combustion chamber pressure [Pa]
 Me = linspace(4.20427,4.20427,10); % Exit Mach Number (determines Area Ratio)
 
@@ -150,7 +151,7 @@ surf(Rt, V, impulse_op);
 title('Impulse vs. Chamber Volume and Throat Radius');
 xlabel('Throat Radius [m]');
 ylabel('Combustion Chamber Volume [m^3]');
-zlabel('Throat Radius [m]');
+zlabel('Impulse [N*s]');
 set(gca, 'FontSize', 15);
 
 figure(5);
