@@ -27,75 +27,73 @@ t = 0.0001; tfinal = 2; % in seconds
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
-% % Optimization #1: Varying Throat Radius 
-% ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
-% Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
-% 
-% for tempRt = Rt
-%     [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
-%         tempRt, MWf, t, tfinal);
-%     ImpulseRt = [ImpulseRt, Impulse];
-%     TRt = [TRt; Th];
-%     IspavgRt = [IspavgRt, Ispavg];
-%     ThrustavgRt = [ThrustavgRt, Thrustavg];
-% end
-% 
-% [maxImpulseI, IndI] = max(ImpulseRt);
-% Rtmax = Rt(IndI);
-% 
-% figure(2);
-% subplot(2,1,1);
-% plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro'); grid on;
-% title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
-% ylabel('Impulse [kg*m/s]');
-% legend('Range','Maximum');
-% 
-% subplot(2,1,2);
-% plot(Rt,IspavgRt,'k-'); grid on;
-% title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
-% ylabel('Isp [s]');
+% Optimization #1: Varying Throat Radius 
+ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
+Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
+
+for tempRt = Rt
+    [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
+        tempRt, MWf, t, tfinal);
+    ImpulseRt = [ImpulseRt, Impulse];
+    IspavgRt = [IspavgRt, Ispavg];
+    ThrustavgRt = [ThrustavgRt, Thrustavg];
+end
+
+[maxImpulseI, IndI] = max(ImpulseRt);
+Rtmax = Rt(IndI);
+
+figure(2);
+subplot(2,1,1);
+plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro'); grid on;
+title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
+ylabel('Impulse [kg*m/s]');
+legend('Range','Maximum');
+
+subplot(2,1,2);
+plot(Rt,IspavgRt,'k-'); grid on;
+title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
+ylabel('Isp [s]');
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % Optimization #2: Varying Combustion Chamber Volume
-% ImpulseV = []; TV = []; IspavgV = []; ThrustavgV = [];
-% % 1U = 1000 cm^3 = 0.001 m^3
-% V = linspace(0.000001,0.003,100); % combustion chamber volume [m^3]
-% Vc = (V.^(1/3) + 2*(0.003)).^3 - V; % Volume of the chamber shell [m^3]
-% Mc = 4500.*Vc; % Mass of the chamber [kg] in Titanium
-% 
-% Me = 4.20427; P0 = 1.013e+5; Rt = 0.795e-3; % make other variables constant
-% 
-% % Note: V is only affected by Rt. Increase in Rt will cause increase in Vmax
-% 
-% for tempV = V
-%     [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, ...
-%         tempV, Rt, MWf, t, tfinal);
-%      ImpulseV = [ImpulseV, Impulse];
-%      TV = [TV; Th];
-%      IspavgV = [IspavgV, Ispavg];
-%      ThrustavgV = [ThrustavgV, Thrustavg];
-% end
-% 
-% [maxImpulseV, IndV] = max(ImpulseV./Mc);
-% Vmax = V(IndV);
-% 
-% figure(3);
-% subplot(3,1,1); 
-% plot(V,ImpulseV./Mc,'k-',Vmax,maxImpulseV,'ro'); grid on;
-% title('Impulse vs. Combustion Chamber Volume'); 
-% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Impulse [kg*m/s]');
-% legend('Range','Maximum');
-% 
-% subplot(3,1,2);
-% plot(V,IspavgV,'k-'); grid on;
-% title('Isp vs. Combustion Chamber Volume'); 
-% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Isp [s]');
-%  
-% subplot(3,1,3);
-% plot(V,ThrustavgV,'k-'); grid on;
-% title('Average Thrust vs. Combustion Chamber Volume'); 
-% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Average Thrust [N]');
+ImpulseV = []; TV = []; IspavgV = []; ThrustavgV = [];
+% 1U = 1000 cm^3 = 0.001 m^3
+V = linspace(0.000001,0.003,100); % combustion chamber volume [m^3]
+Vc = (V.^(1/3) + 2*(0.003)).^3 - V; % Volume of the chamber shell [m^3]
+Mc = 4500.*Vc; % Mass of the chamber [kg] in Titanium
+
+Me = 4.20427; P0 = 1.013e+5; Rt = 0.795e-3; % make other variables constant
+
+% Note: V is only affected by Rt. Increase in Rt will cause increase in Vmax
+
+for tempV = V
+    [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, ...
+        tempV, Rt, MWf, t, tfinal);
+     ImpulseV = [ImpulseV, Impulse];
+     IspavgV = [IspavgV, Ispavg];
+     ThrustavgV = [ThrustavgV, Thrustavg];
+end
+
+[maxImpulseV, IndV] = max(ImpulseV./Mc);
+Vmax = V(IndV);
+
+figure(3);
+subplot(3,1,1); 
+plot(V,ImpulseV./Mc,'k-',Vmax,maxImpulseV,'ro'); grid on;
+title('Impulse vs. Combustion Chamber Volume'); 
+xlabel('Combustion Chamber Volume [m^3]'); ylabel('Impulse [kg*m/s]');
+legend('Range','Maximum');
+
+subplot(3,1,2);
+plot(V,IspavgV,'k-'); grid on;
+title('Isp vs. Combustion Chamber Volume'); 
+xlabel('Combustion Chamber Volume [m^3]'); ylabel('Isp [s]');
+ 
+subplot(3,1,3);
+plot(V,ThrustavgV,'k-'); grid on;
+title('Average Thrust vs. Combustion Chamber Volume'); 
+xlabel('Combustion Chamber Volume [m^3]'); ylabel('Average Thrust [N]');
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
