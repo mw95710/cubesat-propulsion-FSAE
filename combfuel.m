@@ -23,83 +23,83 @@ fprintf('The amount of water remaining in the chamber \n after %f burns = %f mL\
 Me = 4.20427; % exit mach number
 Rt = 0.795e-3; % throat radius
 
-t = 0.0001; tfinal = 2; % in seconds 
+t = 0.00001; tfinal = 2; % in seconds 
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
-% Optimization #1: Varying Throat Radius 
-ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
-Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
-
-for tempRt = Rt
-    [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
-        tempRt, MWf, t, tfinal);
-    ImpulseRt = [ImpulseRt, Impulse];
-    IspavgRt = [IspavgRt, Ispavg];
-    ThrustavgRt = [ThrustavgRt, Thrustavg];
-end
-
-[maxImpulseI, IndI] = max(ImpulseRt);
-Rtmax = Rt(IndI);
-
-figure(2);
-subplot(2,1,1);
-plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro'); grid on;
-title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
-ylabel('Impulse [kg*m/s]');
-legend('Range','Maximum');
-
-subplot(2,1,2);
-plot(Rt,IspavgRt,'k-'); grid on;
-title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
-ylabel('Isp [s]');
+% % Optimization #1: Varying Throat Radius 
+% ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
+% Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
+% 
+% for tempRt = Rt
+%     [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
+%         tempRt, MWf, t, tfinal);
+%     ImpulseRt = [ImpulseRt, Impulse];
+%     IspavgRt = [IspavgRt, Ispavg];
+%     ThrustavgRt = [ThrustavgRt, Thrustavg];
+% end
+% 
+% [maxImpulseI, IndI] = max(ImpulseRt);
+% Rtmax = Rt(IndI);
+% 
+% figure(2);
+% subplot(2,1,1);
+% plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro'); grid on;
+% title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
+% ylabel('Impulse [kg*m/s]');
+% legend('Range','Maximum');
+% 
+% subplot(2,1,2);
+% plot(Rt,IspavgRt,'k-'); grid on;
+% title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
+% ylabel('Isp [s]');
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
-% Optimization #2: Varying Combustion Chamber Volume
-ImpulseV = []; TV = []; IspavgV = []; ThrustavgV = [];
-% 1U = 1000 cm^3 = 0.001 m^3
-V = linspace(0.000001,0.003,100); % combustion chamber volume [m^3]
-Vc = (V.^(1/3) + 2*(0.003)).^3 - V; % Volume of the chamber shell [m^3]
-Mc = 4500.*Vc; % Mass of the chamber [kg] in Titanium
-
-Me = 4.20427; P0 = 1.013e+5; Rt = 0.795e-3; % make other variables constant
-
-% Note: V is only affected by Rt. Increase in Rt will cause increase in Vmax
-
-for tempV = V
-    [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, ...
-        tempV, Rt, MWf, t, tfinal);
-     ImpulseV = [ImpulseV, Impulse];
-     IspavgV = [IspavgV, Ispavg];
-     ThrustavgV = [ThrustavgV, Thrustavg];
-end
-
-[maxImpulseV, IndV] = max(ImpulseV./Mc);
-Vmax = V(IndV);
-
-figure(3);
-subplot(3,1,1); 
-plot(V,ImpulseV./Mc,'k-',Vmax,maxImpulseV,'ro'); grid on;
-title('Impulse vs. Combustion Chamber Volume'); 
-xlabel('Combustion Chamber Volume [m^3]'); ylabel('Impulse [kg*m/s]');
-legend('Range','Maximum');
-
-subplot(3,1,2);
-plot(V,IspavgV,'k-'); grid on;
-title('Isp vs. Combustion Chamber Volume'); 
-xlabel('Combustion Chamber Volume [m^3]'); ylabel('Isp [s]');
- 
-subplot(3,1,3);
-plot(V,ThrustavgV,'k-'); grid on;
-title('Average Thrust vs. Combustion Chamber Volume'); 
-xlabel('Combustion Chamber Volume [m^3]'); ylabel('Average Thrust [N]');
+% % Optimization #2: Varying Combustion Chamber Volume
+% ImpulseV = []; TV = []; IspavgV = []; ThrustavgV = [];
+% % 1U = 1000 cm^3 = 0.001 m^3
+% V = linspace(0.000001,0.003,100); % combustion chamber volume [m^3]
+% Vc = (V.^(1/3) + 2*(0.003)).^3 - V; % Volume of the chamber shell [m^3]
+% Mc = 4500.*Vc; % Mass of the chamber [kg] in Titanium
+% 
+% Me = 4.20427; P0 = 1.013e+5; Rt = 0.795e-3; % make other variables constant
+% 
+% % Note: V is only affected by Rt. Increase in Rt will cause increase in Vmax
+% 
+% for tempV = V
+%     [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, ...
+%         tempV, Rt, MWf, t, tfinal);
+%      ImpulseV = [ImpulseV, Impulse];
+%      IspavgV = [IspavgV, Ispavg];
+%      ThrustavgV = [ThrustavgV, Thrustavg];
+% end
+% 
+% [maxImpulseV, IndV] = max(ImpulseV./Mc);
+% Vmax = V(IndV);
+% 
+% figure(3);
+% subplot(3,1,1); 
+% plot(V,ImpulseV./Mc,'k-',Vmax,maxImpulseV,'ro'); grid on;
+% title('Impulse vs. Combustion Chamber Volume'); 
+% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Impulse [kg*m/s]');
+% legend('Range','Maximum');
+% 
+% subplot(3,1,2);
+% plot(V,IspavgV,'k-'); grid on;
+% title('Isp vs. Combustion Chamber Volume'); 
+% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Isp [s]');
+%  
+% subplot(3,1,3);
+% plot(V,ThrustavgV,'k-'); grid on;
+% title('Average Thrust vs. Combustion Chamber Volume'); 
+% xlabel('Combustion Chamber Volume [m^3]'); ylabel('Average Thrust [N]');
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % Optimization #3: Multi-Variable Optimization 
 Rt = linspace(1e-5,5.8e-3,25); % Throat Radius [m]
-V = linspace(0.00001,0.01,25); % combustion chamber volume [m^3]
+V = linspace(0.0001,0.01,25); % combustion chamber volume [m^3]
 P0 = linspace(1.013e+5,1.013e+7,10); % Pre-combustion chamber pressure [Pa]
 Me = linspace(4.20427,4.20427,10); % Exit Mach Number (determines Area Ratio)
 
@@ -108,23 +108,29 @@ varsImp = []; % [Rt V P0 Me Ar]
 varsIsp = []; % [Rt V P0 Me Ar]
 impulse_op = [];
 Isp_op = [];
+Isp_actual = [];
+
+opPress = 1.013e+6; % operating pressure of 10 atm
 
 % for a = Me
     for b = V
          %for c = P0
             impulse_optemp = [];
             Isp_optemp = [];
+            Isp_actualtemp = [];
             for d = Rt
                 [Th, Ispavg, Impulse, Thrustavg, Ar, cc] = thrustCalc(4.20427, ...
-                    Tf, 1.013e+6, b, d, MWf, t, tfinal);
+                    Tf, opPress, b, d, MWf, t, tfinal);
                 Vc = (b^(1/3) + 2*(0.003))^3 - b; % Volume of the chamber shell [m^3]
                 Mc = 4500*Vc; % Mass of the chamber [kg] in Titanium
                 
                 EffImpulse = Impulse;
                 EffIspavg = Ispavg;
+                propMass = propellantMass(b,opPress);
                 
                 impulse_optemp = [impulse_optemp, Impulse];
                 Isp_optemp = [Isp_optemp, Ispavg];
+                Isp_actualtemp = [Isp_actualtemp, Impulse/(propMass*9.81)];
                 
                 if EffImpulse > maxImp
                     maxImp = EffImpulse;
@@ -140,6 +146,7 @@ Isp_op = [];
             end
             impulse_op = [impulse_op; impulse_optemp];
             Isp_op = [Isp_op; Isp_optemp];
+            Isp_actual = [Isp_actual; Isp_actualtemp];
          %end
     end
 % end
@@ -154,7 +161,15 @@ set(gca, 'FontSize', 15);
 
 figure(5);
 surf(Rt, V, Isp_op);
-title('Isp vs. Chamber Volume and Throat Radius');
+title('Theoretical Isp vs. Chamber Volume and Throat Radius');
+xlabel('Throat Radius [m]');
+ylabel('Combustion Chamber Volume [m^3]');
+zlabel('Specific Impulse [s]');
+set(gca, 'FontSize', 15);
+
+figure(6);
+surf(Rt, V, Isp_actual);
+title('Actual Isp vs. Chamber Volume and Throat Radius');
 xlabel('Throat Radius [m]');
 ylabel('Combustion Chamber Volume [m^3]');
 zlabel('Specific Impulse [s]');
@@ -273,12 +288,12 @@ for i = time
     Pnew = rhonew*R*T0;
     P02 = [P02 Pnew];
     
-    % calculate the knudsen number to determine if fluid is continuum or
+    % calculate the knudsen number to determine if fluid is a continuum or
     % rarified. Stop loop when the fluid becomes rarified because the
     % continuum compressible equations will not apply. 
     kn = kb*Temperature/(sqrt(2)*pi*(hd^2)*Pnew*L);
     
-    if kn > 1
+    if kn > 5
         break
     end
     
@@ -331,3 +346,24 @@ Thrustavg = Impulse/(tfinal-0); % Average Thrust across pulse
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% calculates propellant mass present before combustion based on
+% stoichiometric ratio. P is the absolute pressure [Pa] and V is the chamber
+% volume [m^3] 
+function m = propellantMass(V,P)
+% constants
+R = 8.3144598; % gas constant [J/(K*mol)]
+oxMM = 0.03199880; % molar mass of O2 [kg/mol]
+fuMM = 0.00201588; % molar mass of H2 [kg/mol]
+T = 293; % steady state temperature of combustion chamber [K]
+
+% calculate precombustion ox partial pressure [Pa]
+oxprepar = P/3;
+
+% mols of O2 before combustion
+prenox = oxprepar*V/(R*T);
+
+oxMasscons = (prenox)*oxMM; % O2 consumed assuming all intial O2 is used [kg]
+fuMasscons = 2*(prenox)*fuMM; % H2 consumed assuming all initial H2 is used [kg]
+
+m = oxMasscons + fuMasscons; % conservative estimate 
+end
