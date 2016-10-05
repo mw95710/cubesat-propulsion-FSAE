@@ -293,7 +293,7 @@ for i = time
     % continuum compressible equations will not apply. 
     kn = kb*Temperature/(sqrt(2)*pi*(hd^2)*Pnew*L);
     
-    if kn > 5
+    if kn > 1
         break
     end
     
