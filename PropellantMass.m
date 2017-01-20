@@ -21,15 +21,15 @@ Ae = pi*(0.03159456/2)^2; % nozzle exit area [m^2]
 samplingRate = 1612.903225806452; % sampling rate of pressure sensor [count/s]
 
 % input parameters
-atm = 101325; % atmospheric pressure/back pressure [Pa]
-precombP = 620528 + atm; % pre-combustion absolute pressure [Pa]
+atm = 26.66; % atmospheric pressure/back pressure [Pa]
+precombP = 689476 + atm; % pre-combustion absolute pressure [Pa]
 postcombP = 0 + atm; % post-combustion absolute pressure [Pa]
 T = 293; % steady state temperature of combustion chamber [K]
 % check valve closes when chamber pressure is about 251.5953 psi and when
 % temperature is about 2985 K
-pulseDur = 45/samplingRate; % approximate pulse duration [s]
+pulseDur = 50/samplingRate; % approximate pulse duration [s]
 impulsecorr = pulseDur*atm*Ae; % impulse correction for back pressure [N*s]
-impulsemeasured = 9.747e-3; % measured impulse from test rig [N*s]
+impulsemeasured = 7.057e-2; % measured impulse from test rig [N*s]
 impulse = impulsemeasured + impulsecorr; % impulse delivered [N*s]
 
 % calculate precombustion ox partial pressure [Pa]

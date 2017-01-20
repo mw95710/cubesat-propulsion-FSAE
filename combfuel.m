@@ -28,31 +28,36 @@ t = 0.00001; tfinal = 2; % in seconds
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % % Optimization #1: Varying Throat Radius 
-% ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
-% Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
-% 
-% for tempRt = Rt
-%     [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
-%         tempRt, MWf, t, tfinal);
-%     ImpulseRt = [ImpulseRt, Impulse];
-%     IspavgRt = [IspavgRt, Ispavg];
-%     ThrustavgRt = [ThrustavgRt, Thrustavg];
-% end
-% 
-% [maxImpulseI, IndI] = max(ImpulseRt);
-% Rtmax = Rt(IndI);
-% 
-% figure(2);
-% subplot(2,1,1);
-% plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro'); grid on;
-% title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
-% ylabel('Impulse [kg*m/s]');
-% legend('Range','Maximum');
-% 
-% subplot(2,1,2);
-% plot(Rt,IspavgRt,'k-'); grid on;
-% title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
-% ylabel('Isp [s]');
+ImpulseRt = []; TRt = []; IspavgRt = []; ThrustavgRt = [];
+Rt = linspace(1e-4,5e-3,100); % Varying Throat Radius
+V = 2.1e-4; 
+
+for tempRt = Rt
+    [Th, Ispavg, Impulse, Thrustavg, Ar, c] = thrustCalc(Me, Tf, P0, V, ...
+        tempRt, MWf, t, tfinal);
+    ImpulseRt = [ImpulseRt, Impulse];
+    IspavgRt = [IspavgRt, Ispavg];
+    ThrustavgRt = [ThrustavgRt, Thrustavg];
+end
+
+[maxImpulseI, IndI] = max(ImpulseRt);
+Rtmax = Rt(IndI);
+
+figure(2);
+%subplot(2,1,1);  
+plot(Rt,ImpulseRt,'k-',Rtmax,maxImpulseI,'ro','LineWidth',1.8,'MarkerSize',13); 
+grid on; box on;
+Rtmax
+title('Impulse vs. Throat Radius'); xlabel('Throat Radius [m]');
+ylabel('Impulse [kg*m/s]');
+legend('Range','Maximum','Location','Best');
+set(gca,'FontSize',24);
+
+figure(3);
+%subplot(2,1,2);
+plot(Rt,IspavgRt,'k-'); grid on;
+title('Isp vs. Throat Radius'); xlabel('Throat Radius [m]');
+ylabel('Isp [s]');
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -98,82 +103,82 @@ t = 0.00001; tfinal = 2; % in seconds
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % Optimization #3: Multi-Variable Optimization 
-Rt = linspace(1e-5,5.8e-3,25); % Throat Radius [m]
-V = linspace(0.0001,0.01,25); % combustion chamber volume [m^3]
-P0 = linspace(1.013e+5,1.013e+7,10); % Pre-combustion chamber pressure [Pa]
-Me = linspace(4.20427,4.20427,10); % Exit Mach Number (determines Area Ratio)
-
-maxImp = 0; maxIsp = 0; 
-varsImp = []; % [Rt V P0 Me Ar]
-varsIsp = []; % [Rt V P0 Me Ar]
-impulse_op = [];
-Isp_op = [];
-Isp_actual = [];
-
-opPress = 1.013e+6; % operating pressure of 10 atm
-
-% for a = Me
-    for b = V
-         %for c = P0
-            impulse_optemp = [];
-            Isp_optemp = [];
-            Isp_actualtemp = [];
-            for d = Rt
-                [Th, Ispavg, Impulse, Thrustavg, Ar, cc] = thrustCalc(4.20427, ...
-                    Tf, opPress, b, d, MWf, t, tfinal);
-                Vc = (b^(1/3) + 2*(0.003))^3 - b; % Volume of the chamber shell [m^3]
-                Mc = 4500*Vc; % Mass of the chamber [kg] in Titanium
-                
-                EffImpulse = Impulse;
-                EffIspavg = Ispavg;
-                propMass = propellantMass(b,opPress);
-                
-                impulse_optemp = [impulse_optemp, Impulse];
-                Isp_optemp = [Isp_optemp, Ispavg];
-                Isp_actualtemp = [Isp_actualtemp, Impulse/(propMass*9.81)];
-                
-                if EffImpulse > maxImp
-                    maxImp = EffImpulse;
-                    currentImp = Impulse;
-                    varsImp = [b d Ar];
-                end
-                
-                if EffIspavg > maxIsp
-                    maxIsp = EffIspavg;
-                    currentIspavg = Ispavg;
-                    varsIsp = [b d Ar];
-                end
-            end
-            impulse_op = [impulse_op; impulse_optemp];
-            Isp_op = [Isp_op; Isp_optemp];
-            Isp_actual = [Isp_actual; Isp_actualtemp];
-         %end
-    end
-% end
-
-figure(4);
-surf(Rt, V, impulse_op);
-title('Impulse vs. Chamber Volume and Throat Radius');
-xlabel('Throat Radius [m]');
-ylabel('Combustion Chamber Volume [m^3]');
-zlabel('Impulse [N*s]');
-set(gca, 'FontSize', 15);
-
-figure(5);
-surf(Rt, V, Isp_op);
-title('Theoretical Isp vs. Chamber Volume and Throat Radius');
-xlabel('Throat Radius [m]');
-ylabel('Combustion Chamber Volume [m^3]');
-zlabel('Specific Impulse [s]');
-set(gca, 'FontSize', 15);
-
-figure(6);
-surf(Rt, V, Isp_actual);
-title('Actual Isp vs. Chamber Volume and Throat Radius');
-xlabel('Throat Radius [m]');
-ylabel('Combustion Chamber Volume [m^3]');
-zlabel('Specific Impulse [s]');
-set(gca, 'FontSize', 15);
+% Rt = linspace(1e-5,5.8e-3,25); % Throat Radius [m]
+% V = linspace(0.0001,0.01,25); % combustion chamber volume [m^3]
+% P0 = linspace(1.013e+5,1.013e+7,10); % Pre-combustion chamber pressure [Pa]
+% Me = linspace(4.20427,4.20427,10); % Exit Mach Number (determines Area Ratio)
+% 
+% maxImp = 0; maxIsp = 0; 
+% varsImp = []; % [Rt V P0 Me Ar]
+% varsIsp = []; % [Rt V P0 Me Ar]
+% impulse_op = [];
+% Isp_op = [];
+% Isp_actual = [];
+% 
+% opPress = 1.013e+6; % operating pressure of 10 atm
+% 
+% % for a = Me
+%     for b = V
+%          %for c = P0
+%             impulse_optemp = [];
+%             Isp_optemp = [];
+%             Isp_actualtemp = [];
+%             for d = Rt
+%                 [Th, Ispavg, Impulse, Thrustavg, Ar, cc] = thrustCalc(4.20427, ...
+%                     Tf, opPress, b, d, MWf, t, tfinal);
+%                 Vc = (b^(1/3) + 2*(0.003))^3 - b; % Volume of the chamber shell [m^3]
+%                 Mc = 4500*Vc; % Mass of the chamber [kg] in Titanium
+%                 
+%                 EffImpulse = Impulse;
+%                 EffIspavg = Ispavg;
+%                 propMass = propellantMass(b,opPress);
+%                 
+%                 impulse_optemp = [impulse_optemp, Impulse];
+%                 Isp_optemp = [Isp_optemp, Ispavg];
+%                 Isp_actualtemp = [Isp_actualtemp, Impulse/(propMass*9.81)];
+%                 
+%                 if EffImpulse > maxImp
+%                     maxImp = EffImpulse;
+%                     currentImp = Impulse;
+%                     varsImp = [b d Ar];
+%                 end
+%                 
+%                 if EffIspavg > maxIsp
+%                     maxIsp = EffIspavg;
+%                     currentIspavg = Ispavg;
+%                     varsIsp = [b d Ar];
+%                 end
+%             end
+%             impulse_op = [impulse_op; impulse_optemp];
+%             Isp_op = [Isp_op; Isp_optemp];
+%             Isp_actual = [Isp_actual; Isp_actualtemp];
+%          %end
+%     end
+% % end
+% 
+% figure(4);
+% surf(Rt, V, impulse_op);
+% title('Impulse vs. Chamber Volume and Throat Radius');
+% xlabel('Throat Radius [m]');
+% ylabel('Combustion Chamber Volume [m^3]');
+% zlabel('Impulse [N*s]');
+% set(gca, 'FontSize', 15);
+% 
+% figure(5);
+% surf(Rt, V, Isp_op);
+% title('Theoretical Isp vs. Chamber Volume and Throat Radius');
+% xlabel('Throat Radius [m]');
+% ylabel('Combustion Chamber Volume [m^3]');
+% zlabel('Specific Impulse [s]');
+% set(gca, 'FontSize', 15);
+% 
+% figure(6);
+% surf(Rt, V, Isp_actual);
+% title('Actual Isp vs. Chamber Volume and Throat Radius');
+% xlabel('Throat Radius [m]');
+% ylabel('Combustion Chamber Volume [m^3]');
+% zlabel('Specific Impulse [s]');
+% set(gca, 'FontSize', 15);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
